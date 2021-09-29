@@ -1,9 +1,10 @@
 #!/bin/bash
 
 HTTPS_PROXY='https_proxy=http://10.40.1.68:443/'
+SERVICE=''
 VERSION='12'
-PGDATA='/mnt/crowdfunding/postgresql/data'
-PGARCHIVE='/mnt/crowdfunding/postgresql/archived_wal'
+PGDATA='/mnt/$SERVICE/postgresql/data'
+PGARCHIVE='/mnt/$SERVICE/postgresql/archived_wal'
 CONF_DIR='/home/postgres'
 TUNE_CONF_FILE='tune.conf'
 LOG_CONF_FILE='logging.conf'
