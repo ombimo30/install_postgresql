@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HTTPS_PROXY='https_proxy=http://10.40.1.68:443/'
+HTTPS_PROXY=''
 SERVICE=''
 VERSION='12'
 PGDATA='/mnt/$SERVICE/postgresql/data'
