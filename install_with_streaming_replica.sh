@@ -59,6 +59,7 @@ if [ $BASEBACKUP_STATUS -eq 0 ];
 then 
     echo 'promote_trigger_file='/tmp/$SERVICE-promote' >> $PGDATA/postgresql.conf'
     $PGHOME/pg_ctl -D $PGDATA start
+    echo "Instance is created"
 else
     echo "Backup failed, no instance created"
     exit 1
