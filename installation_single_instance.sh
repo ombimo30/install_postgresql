@@ -74,6 +74,8 @@ export TZ=Asia/Jakarta
 STARTTIME=$(date --date=$STARTTIME -Is)
 ENDTIME=$(date --date=$ENDTIME -Is)
 
+echo 'Created Postgresql-$VERSION instance at $ENDTIME'
+
 printf "\"CREATE POSTGRESQL INSTANCE STATUS\",\"$DB_NAME\",\"$VERSION\",\"$STARTTIME\", \"$ENDTIME\", \"$TIMEUSED\", \"$DUMP_STATUS\" >> $WORKING_DIR/$LOG_FILE_FORMAT
 
 # Create user
