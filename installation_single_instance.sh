@@ -39,6 +39,10 @@ sudo mkdir -p $PGARCHIVE
 sudo chown postgres. -R $PGDATA
 sudo chown postgres. -R $PGARCHIVE
 
+echo 'Creating Postgresql-$VERSION instance'
+
+STARTTIME=$(date -Is)
+
 # Initialize database
 #su - postgres
 $PGHOME/initdb -D $PGDATA
@@ -60,6 +64,15 @@ echo "include='$MONITORING_CONF_FILE'" >> $PG_CONF_FILE
 
 # Start database instance
 $PGHOME/pg_ctl -D $PGDATA start
+
+ENDTIME=$(date -Is)
+STARTTIMESTAMP=$(date -d "${STARTTIME}" +%s)
+ENDTIMESTAMP=$(date -d "${ENDTIME}" +%s)
+TIMEUSED=$(( ENDTIMESTAMP-STARTTIMESTAMP ))
+
+export TZ=Asia/Jakarta
+STARTTIME=$(date --date=$STARTTIME -Is)
+ENDTIME=$(date --date=$ENDTIME -Is)
 
 # Create user
 $PGHOME/psql -U postgres -d postgres -p $PORT -c "CREATE USER $DBUSER WITH ENCRYPTED PASSWORD '$DBPASSWORD' CREATEDB;"
