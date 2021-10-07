@@ -52,15 +52,17 @@ fi
 
 # Run pg_basebackup
 $PGHOME/pg_basebackup -U $REPUSER -h $DBMASTER -p $PORT -D $PGDATA -X stream -c fast -RvP > /tmp/replica.log
+BASEBACKUP_STATUS=$?
 
-# Start Instance
-FILE="$1"
-if [ ! -e "$PGDATA/$FILE" ];
-    then
-        echo "Backup failed, no instance created"
-        exit 1
-    else
-        echo 'trigger_file='/tmp/$SERVICE-promote' >> $PGDATA/recovery.conf'
-        $PGHOME/pg_ctl -D $PGDATA start
-    fi
+# Start instance
+if [ $BASEBACKUP_STATUS -eq 0 ];
+then 
+    echo 'promote_trigger_file='/tmp/$SERVICE-promote' >> $PGDATA/postgresql.conf'
+    $PGHOME/pg_ctl -D $PGDATA start
+else
+    echo "Backup failed, no instance created"
+    exit 1
+fi
+
+
 
