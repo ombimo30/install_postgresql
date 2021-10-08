@@ -1,21 +1,21 @@
 #!/bin/bash
 
-HTTPS_PROXY=''
-SERVICE=''
-VERSION='12'
-PGDATA='/mnt/$SERVICE/postgresql/data'
-PGARCHIVE='/mnt/$SERVICE/postgresql/archived_wal'
-CONF_DIR='/home/postgres'
-TUNE_CONF_FILE='tune.conf'
-LOG_CONF_FILE='logging.conf'
-REPLICATION_CONF_FILE='replication.conf'
-MONITORING_CONF_FILE='monitoring.conf'
-DBUSER=''
-DBPASSWORD=''
-ADMUSER=''
-ADMPASSWORD=''
-DBNAME=''
-PORT=''
+export HTTPS_PROXY=''
+export SERVICE=''
+export VERSION='12'
+export PGDATA='/mnt/$SERVICE/postgresql/data'
+export PGARCHIVE='/mnt/$SERVICE/postgresql/archived_wal'
+export CONF_DIR='/home/postgres'
+export TUNE_CONF_FILE='tune.conf'
+export LOG_CONF_FILE='logging.conf'
+export REPLICATION_CONF_FILE='replication.conf'
+export MONITORING_CONF_FILE='monitoring.conf'
+export DBUSER=''
+export DBPASSWORD=''
+export ADMUSER=''
+export ADMPASSWORD=''
+export DBNAME=''
+export PORT=''
 
 # Create the file repository configuration
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
@@ -33,7 +33,7 @@ sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
 sudo systemctl stop postgresql
 
 # Create data directory
-PGHOME='/usr/lib/postgresql/12/bin'
+export PGHOME='/usr/lib/postgresql/$VERSION/bin'
 sudo mkdir -p $PGDATA
 sudo mkdir -p $PGARCHIVE
 sudo chown postgres. -R $PGDATA
@@ -56,7 +56,7 @@ cp $MONITORING_CONF_FILE $PGDATA/
 
 # Edit postgresql.conf file
 cd $PGDATA
-PG_CONF_FILE='postgresql.conf'
+export PG_CONF_FILE='postgresql.conf'
 echo "include='$TUNE_CONF_FILE'" >> $PG_CONF_FILE
 echo "include='$LOG_CONF_FILE'" >> $PG_CONF_FILE
 echo "include='$REPLICATION_CONF_FILE'" >> $PG_CONF_FILE
