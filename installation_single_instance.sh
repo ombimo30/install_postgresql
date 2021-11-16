@@ -2,10 +2,10 @@
 
 export HTTPS_PROXY=''
 export SERVICE=''
-export VERSION='12'
-export PGDATA='/mnt/$SERVICE/postgresql/data'
-export PGARCHIVE='/mnt/$SERVICE/postgresql/archived_wal'
-export CONF_DIR='/home/postgres'
+export VERSION='13'
+export PGDATA='/mnt/salcred/postgresql/data'
+export PGARCHIVE='/mnt/salcred/postgresql/archive'
+export CONF_DIR='/home/postgres/install_postgresql'
 export TUNE_CONF_FILE='tune.conf'
 export LOG_CONF_FILE='logging.conf'
 export REPLICATION_CONF_FILE='replication.conf'
@@ -17,25 +17,25 @@ export ADMPASSWORD=''
 export DBNAME=''
 export PORT=''
 export WORKING_DIR='/home/postgres'
-export LOG_FILE_FORMAT='postgresql-$VERSION.log'
+export LOG_FILE_FORMAT=postgresql-$VERSION.log
 
 # Create the file repository configuration
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+#sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
 # Import the repository signing key
-sudo $HTTPS_PROXY wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+#sudo $HTTPS_PROXY wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 # Update the package lists
-sudo apt-get update
+#sudo apt-get update
 
 # Install PostgreSQL
-sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
+#sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
 
 # Stop PostgreSQL service
-sudo systemctl stop postgresql
+#sudo systemctl stop postgresql
 
 # Create data directory
-PGHOME='/usr/lib/postgresql/$VERSION/bin'
+export PGHOME=/usr/lib/postgresql/$VERSION/bin
 if [ ! -d "$PGDATA" ];
 then
     sudo mkdir -p $PGDATA
@@ -50,7 +50,7 @@ else
     exit 1
 fi
 
-echo 'Creating Postgresql-$VERSION instance'
+echo Creating Postgresql-$VERSION instance
 
 STARTTIME=$(date -Is)
 
@@ -59,6 +59,7 @@ STARTTIME=$(date -Is)
 $PGHOME/initdb -D $PGDATA
 
 # Copy config file to data dir
+echo "archive_command='cp %p $PGARCHIVE/%f'" >> $CONF_DIR/$REPLICATION_CONF_FILE
 cp $CONF_DIR/$TUNE_CONF_FILE $PGDATA/
 cp $CONF_DIR/$LOG_CONF_FILE $PGDATA/
 cp $CONF_DIR/$REPLICATION_CONF_FILE $PGDATA/
@@ -84,7 +85,8 @@ export TZ=Asia/Jakarta
 STARTTIME=$(date --date=$STARTTIME -Is)
 ENDTIME=$(date --date=$ENDTIME -Is)
 
-echo 'Created Postgresql-$VERSION instance at $ENDTIME'
+echo Created Postgresql-$VERSION instance at $ENDTIME
 
-printf "\"CREATE POSTGRESQL INSTANCE STATUS\",\"$DB_NAME\",\"$VERSION\",\"$STARTTIME\", \"$ENDTIME\", \"$TIMEUSED\", \"$DUMP_STATUS\" >> $WORKING_DIR/$LOG_FILE_FORMAT
+printf "\"CREATE POSTGRESQL INSTANCE STATUS\",\"$DB_NAME\",\"$VERSION\",\"$STARTTIME\", \"$ENDTIME\", \"$TIMEUSED\"" >> $WORKING_DIR/$LOG_FILE_FORMAT
+
 
