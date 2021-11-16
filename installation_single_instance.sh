@@ -1,10 +1,22 @@
 #!/bin/bash
 
+# Please create OS user postgres by using adduser postgres command
+# Before begin the installation, please make sure that you have the correct tuning configuration taking from https://pgtune.leopard.in.ua/#/
+# Don't forget to edit configuration file especially replication.conf if necessary
+# Grant sudoers to postgres user by using these command :
+# usermod -aG wheel postgres (for RHEL/centOS)
+# usermod -aG sudo postgres (for Ubuntu)
+# echo "postgres  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/postgres
+# Revoke sudoers from postgres when it's done by using this command 
+# deluser postgres sudo
+# PLEASE ENJOY #
+
+export HOST=''
 export HTTPS_PROXY=''
 export SERVICE=''
 export VERSION='13'
-export PGDATA='/mnt/salcred/postgresql/data'
-export PGARCHIVE='/mnt/salcred/postgresql/archive'
+export PGDATA=/mnt/$SERVICE/postgresql/data
+export PGARCHIVE=/mnt/$SERVICE/postgresql/archive
 export CONF_DIR='/home/postgres/install_postgresql'
 export TUNE_CONF_FILE='tune.conf'
 export LOG_CONF_FILE='logging.conf'
@@ -20,19 +32,19 @@ export WORKING_DIR='/home/postgres'
 export LOG_FILE_FORMAT=postgresql-$VERSION.log
 
 # Create the file repository configuration
-#sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
 # Import the repository signing key
-#sudo $HTTPS_PROXY wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo $HTTPS_PROXY wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 # Update the package lists
-#sudo apt-get update
+sudo apt-get update
 
 # Install PostgreSQL
-#sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
+sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
 
 # Stop PostgreSQL service
-#sudo systemctl stop postgresql
+sudo systemctl stop postgresql
 
 # Create data directory
 export PGHOME=/usr/lib/postgresql/$VERSION/bin
@@ -87,6 +99,6 @@ ENDTIME=$(date --date=$ENDTIME -Is)
 
 echo Created Postgresql-$VERSION instance at $ENDTIME
 
-printf "\"CREATE POSTGRESQL INSTANCE STATUS\",\"$DB_NAME\",\"$VERSION\",\"$STARTTIME\", \"$ENDTIME\", \"$TIMEUSED\"" >> $WORKING_DIR/$LOG_FILE_FORMAT
+printf "\"CREATE POSTGRESQL INSTANCE STATUS\",\"$HOST\",\"$SERVICE\",\"$VERSION\",\"$STARTTIME\", \"$ENDTIME\", \"$TIMEUSED\"" >> $WORKING_DIR/$LOG_FILE_FORMAT
 
 
