@@ -5,7 +5,7 @@ export VERSION='12'
 export SERVICE=''
 export PGDATA=''
 export PGARCHIVE=''
-export CONF_DIR='/home/postgres'
+export CONF_DIR='/home/postgres/install_postgresql'
 export TUNE_CONF_FILE='tune.conf'
 export LOG_CONF_FILE='logging.conf'
 export REPLICATION_CONF_FILE='replication.conf'
@@ -35,7 +35,7 @@ sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
 sudo systemctl stop postgresql
 
 # Create data directory
-PGHOME='/usr/lib/postgresql/$VERSION/bin'
+PGHOME=/usr/lib/postgresql/$VERSION/bin
 if [ ! -d "$PGDATA" ];
 then
     sudo mkdir -p $PGDATA
@@ -57,7 +57,7 @@ BASEBACKUP_STATUS=$?
 # Start instance
 if [ $BASEBACKUP_STATUS -eq 0 ];
 then 
-    echo 'promote_trigger_file='/tmp/$SERVICE-promote' >> $PGDATA/postgresql.conf'
+    echo "promote_trigger_file='/tmp/$SERVICE-promote'" >> $PGDATA/postgresql.conf
     $PGHOME/pg_ctl -D $PGDATA start
     echo "Instance is created"
 else
