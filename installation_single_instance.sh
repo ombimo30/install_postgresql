@@ -35,11 +35,20 @@ sudo apt-get -y install postgresql-$VERSION postgresql-contrib-$VERSION
 sudo systemctl stop postgresql
 
 # Create data directory
-export PGHOME='/usr/lib/postgresql/$VERSION/bin'
-sudo mkdir -p $PGDATA
-sudo mkdir -p $PGARCHIVE
-sudo chown postgres. -R $PGDATA
-sudo chown postgres. -R $PGARCHIVE
+PGHOME='/usr/lib/postgresql/$VERSION/bin'
+if [ ! -d "$PGDATA" ];
+then
+    sudo mkdir -p $PGDATA
+    sudo mkdir -p $PGARCHIVE
+    sudo chown postgres. -R $PGDATA
+    sudo chmod 700 postgres. -R $PGDATA
+    sudo chown postgres. -R $PGARCHIVE
+    echo "Directory $PGDATA created"
+    echo "Directory $PGARCHIVE created"
+else
+    echo "Directory exists"
+    exit 1
+fi
 
 echo 'Creating Postgresql-$VERSION instance'
 
@@ -50,11 +59,10 @@ STARTTIME=$(date -Is)
 $PGHOME/initdb -D $PGDATA
 
 # Copy config file to data dir
-cd $CONF_DIR
-cp $TUNE_CONF_FILE $PGDATA/
-cp $LOG_CONF_FILE $PGDATA/
-cp $REPLICATION_CONF_FILE $PGDATA/
-cp $MONITORING_CONF_FILE $PGDATA/
+cp $CONF_DIR/$TUNE_CONF_FILE $PGDATA/
+cp $CONF_DIR/$LOG_CONF_FILE $PGDATA/
+cp $CONF_DIR/$REPLICATION_CONF_FILE $PGDATA/
+cp $CONF_DIR/$MONITORING_CONF_FILE $PGDATA/
 
 # Edit postgresql.conf file
 cd $PGDATA
