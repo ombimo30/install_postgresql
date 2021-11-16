@@ -88,16 +88,3 @@ echo 'Created Postgresql-$VERSION instance at $ENDTIME'
 
 printf "\"CREATE POSTGRESQL INSTANCE STATUS\",\"$DB_NAME\",\"$VERSION\",\"$STARTTIME\", \"$ENDTIME\", \"$TIMEUSED\", \"$DUMP_STATUS\" >> $WORKING_DIR/$LOG_FILE_FORMAT
 
-# Create user
-$PGHOME/psql -U postgres -d postgres -p $PORT -c "CREATE USER $DBUSER WITH ENCRYPTED PASSWORD '$DBPASSWORD' CREATEDB;"
-$PGHOME/psql -U postgres -d postgres -p $PORT -c "CREATE USER $ADMUSER WITH ENCRYPTED PASSWORD '$ADMPASSWORD' SUPERUSER;"
-$PGHOME/psql -U postgres -d postgres -p $PORT -c "ALTER USER postgres NOLOGIN;"
-
-# Create database
-$PGHOME/psql -U $DBUSER -d postgres -p $PORT -c "CREATE DATABASE $DBNAME;"
-
-# Add pg_hba
-cd $PGDATA
-PG_HBA_FILE='pg_hba.conf'
-echo "host  $DBNAME     $DBUSER     0.0.0.0/0       md5" >> $PG_HBA_FILE
-$PGHOME/psql -U $ADMUSER -d postgres -p $PORT -c "SELECT PG_RELOAD_CONF();"
